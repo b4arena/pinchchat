@@ -14,7 +14,7 @@ export function useGateway() {
   const [status, setStatus] = useState<ConnectionStatus>('disconnected');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [sessions, setSessions] = useState<Session[]>([]);
-  const [activeSession, setActiveSession] = useState('agent:main:main');
+  const [activeSession, setActiveSession] = useState(import.meta.env.VITE_AGENT_SESSION || 'agent:main:main');
   const [isGenerating, setIsGenerating] = useState(false);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [authenticated, setAuthenticated] = useState<boolean | null>(null); // null = checking
@@ -89,7 +89,7 @@ export function useGateway() {
 
   const loadAgentIdentity = useCallback(async () => {
     try {
-      const res = await clientRef.current?.send('agent.identity.get', {});
+      const res = await clientRef.current?.send('agent.identity.get', { sessionKey: activeSessionRef.current });
       if (res) {
         setAgentIdentity({
           name: res.name as string | undefined,
@@ -108,15 +108,19 @@ export function useGateway() {
       const res = await clientRef.current?.send('sessions.list', {});
       const sessionList = res?.sessions as Array<Record<string, unknown>> | undefined;
       if (sessionList) {
+        const agentPrefix = import.meta.env.VITE_AGENT_PREFIX;
+        const filteredSessionList = agentPrefix
+          ? sessionList.filter((s) => ((s.key || s.sessionKey) as string).startsWith(agentPrefix))
+          : sessionList;
         const deleted = getDeletedSessions();
         // Reconcile: remove blacklisted keys for sessions that no longer exist on the gateway
         // (they were successfully deleted, so no need to keep hiding them)
-        const activeKeys = new Set(sessionList.map((s) => (s.key || s.sessionKey) as string));
+        const activeKeys = new Set(filteredSessionList.map((s) => (s.key || s.sessionKey) as string));
         const reconciled = new Set([...deleted].filter((k) => activeKeys.has(k)));
         if (reconciled.size !== deleted.size) {
           localStorage.setItem('pinchchat-deleted-sessions', JSON.stringify([...reconciled]));
         }
-        setSessions(sessionList.filter((s) => !deleted.has((s.key || s.sessionKey) as string)).map((s) => ({
+        setSessions(filteredSessionList.filter((s) => !deleted.has((s.key || s.sessionKey) as string)).map((s) => ({
           key: (s.key || s.sessionKey) as string,
           label: (s.label || s.key || s.sessionKey) as string,
           messageCount: s.messageCount as number | undefined,
