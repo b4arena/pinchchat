@@ -29,6 +29,7 @@ jobs:
         with:
           images: ghcr.io/b4arena/pinchchat
           tags: |
+            type=raw,value=latest
             type=raw,value=edge
             type=sha,prefix=
 
