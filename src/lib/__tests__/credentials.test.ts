@@ -36,9 +36,9 @@ describe('getStoredCredentials', () => {
     expect(getStoredCredentials()).toBeNull();
   });
 
-  it('returns null if token is missing', () => {
+  it('returns credentials when token is missing (Tailscale mode)', () => {
     store['pinchchat_credentials'] = JSON.stringify({ url: 'wss://gw' });
-    expect(getStoredCredentials()).toBeNull();
+    expect(getStoredCredentials()).toEqual({ url: 'wss://gw' });
   });
 });
 
