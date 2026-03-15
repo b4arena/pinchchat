@@ -355,6 +355,9 @@ export function useGateway() {
     if (stored) {
       // Init on mount — setupClient sets state as part of establishing the connection
       setupClient(stored.url, stored.token, stored.authMode || 'token', stored.clientId);
+    } else if (import.meta.env.VITE_GATEWAY_WS_URL) {
+      // Tailscale auto-connect: device pairing provides security
+      setupClient(import.meta.env.VITE_GATEWAY_WS_URL, '', 'token');
     } else {
       setAuthenticated(false);
     }
