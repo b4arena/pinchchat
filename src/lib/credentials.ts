@@ -16,7 +16,7 @@ export function getStoredCredentials(): StoredCredentials | null {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw);
-    if (parsed.url && parsed.token) return parsed;
+    if (parsed.url) return parsed;
   } catch {
     // Ignore malformed localStorage data
   }

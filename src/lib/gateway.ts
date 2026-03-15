@@ -160,7 +160,11 @@ export class GatewayClient {
         caps: [],
         commands: [],
         permissions: {},
-        auth: this.authMode === 'password' ? { password: this.authToken } : { token: this.authToken },
+        auth: this.authMode === 'password'
+          ? { password: this.authToken }
+          : this.authToken
+            ? { token: this.authToken }
+            : {},
         device,
         locale: (typeof navigator !== 'undefined' ? navigator.language : undefined) || 'en',
         userAgent: `pinchchat/${__APP_VERSION__}`,

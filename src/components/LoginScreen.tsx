@@ -56,7 +56,7 @@ export function LoginScreen({ onConnect, error, isConnecting }: Props) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!urlTrimmed || !token.trim() || !isValidWsUrl) return;
+    if (!urlTrimmed || !isValidWsUrl) return;
     onConnect(urlTrimmed, token.trim(), authMode, clientId.trim() || undefined);
   };
 
@@ -198,7 +198,7 @@ export function LoginScreen({ onConnect, error, isConnecting }: Props) {
 
           <button
             type="submit"
-            disabled={!isValidWsUrl || !token.trim() || isConnecting}
+            disabled={!isValidWsUrl || isConnecting}
             className="w-full rounded-xl bg-gradient-to-r from-cyan-500 to-violet-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/30 hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
             aria-label={isConnecting ? t('login.connecting') : t('login.connect')}
           >

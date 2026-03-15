@@ -48,4 +48,4 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             VITE_GATEWAY_WS_URL=wss://mimas.tailc66a3b.ts.net
-            VITE_DEFAULT_AUTH_MODE=password
+            VITE_DEFAULT_AUTH_MODE=token
