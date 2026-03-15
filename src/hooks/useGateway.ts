@@ -356,8 +356,10 @@ export function useGateway() {
       // Init on mount — setupClient sets state as part of establishing the connection
       setupClient(stored.url, stored.token, stored.authMode || 'token', stored.clientId);
     } else if (import.meta.env.VITE_GATEWAY_WS_URL) {
-      // Tailscale auto-connect: device pairing provides security
-      setupClient(import.meta.env.VITE_GATEWAY_WS_URL, '', 'token');
+      // Tailscale auto-connect: baked credentials trigger NOT_PAIRED for new devices
+      const cred = import.meta.env.VITE_GATEWAY_PASSWORD || import.meta.env.VITE_GATEWAY_TOKEN || '';
+      const mode = import.meta.env.VITE_GATEWAY_PASSWORD ? 'password' : 'token';
+      setupClient(import.meta.env.VITE_GATEWAY_WS_URL, cred, mode);
     } else {
       setAuthenticated(false);
     }
